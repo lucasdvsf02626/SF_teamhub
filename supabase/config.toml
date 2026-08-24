@@ -1,0 +1,79 @@
+project_id = "tiornvtwymjhsrrpbwvr"
+
+[functions]
+  [functions.analyze-error]
+    verify_jwt = false
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.bradford-score-alert]
+    verify_jwt = false
+  [functions.bulk-sync-from-hive]
+    verify_jwt = false
+  [functions.bulk-sync-to-hive]
+    verify_jwt = false
+  [functions.check-certification-expiry]
+    verify_jwt = false
+  [functions.cleanup-non-hive-users]
+    verify_jwt = true
+  [functions.confirm-password-reset]
+    verify_jwt = false
+  [functions.request-password-reset]
+    verify_jwt = false
+  [functions.delete-user]
+    verify_jwt = true
+  [functions.diagnose-hive-connection]
+    verify_jwt = false
+  [functions.generate-qr-token]
+    verify_jwt = true
+  [functions.invite-user]
+    verify_jwt = true
+  [functions.process-email-queue]
+    verify_jwt = true
+  [functions.reset-user-password]
+    verify_jwt = true
+  [functions.scheduled-sync-from-hive]
+    verify_jwt = false
+  [functions.send-broadcast-email]
+    verify_jwt = true
+  [functions.send-leave-notification]
+    verify_jwt = false
+  [functions.sync-failure-alert]
+    verify_jwt = true
+  [functions.sync-from-hive]
+    verify_jwt = false
+  [functions.sync-to-hive]
+    verify_jwt = false
+  [functions.update-sync-schedule]
+    verify_jwt = false
+  [functions.validate-qr-token]
+    verify_jwt = false
+  [functions.reconcile-attendance]
+    verify_jwt = false
+  [functions.generate-attendance-summaries]
+    verify_jwt = false
+  [functions.reconcile-attendance-v2]
+    verify_jwt = false
+  [functions.dispatch-automation-events]
+    verify_jwt = false
+  [functions.hivemail-stub-emit]
+    verify_jwt = true
+  [functions.hivemail-bridge-proxy]
+    verify_jwt = true
+  [functions.hive-mail-inbound]
+    verify_jwt = false
+  [functions.hivemail-attachment-resign]
+    verify_jwt = true
+  [functions.hivemail-smoke-impersonate]
+    verify_jwt = false
+  [functions.hivemail-smoke-runner]
+    verify_jwt = true
+  [functions.hivemail-smoke-bridge-introspect]
+    verify_jwt = true
+  [functions.hivemail-smoke-bridge-dryrun]
+    verify_jwt = false
+  [functions.teamhub-cpi-sync-dispatcher]
+    verify_jwt = false
+  [functions.teamhub-shift-assignment-bridge-in]
+    verify_jwt = false
+  [functions.teamhub-attendance-reporting-out]
+    verify_jwt = false

@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.payroll_smoke_test_run();

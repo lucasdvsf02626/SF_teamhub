@@ -1,0 +1,320 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Force Desktop Mode */
+html.force-desktop {
+  min-width: 1024px;
+}
+
+html.force-desktop body {
+  overflow-x: auto;
+}
+
+/* SF:Team Hub Design System - Industrial/Factory Aesthetic */
+
+@layer base {
+  :root {
+    /* Core palette - Dark industrial with warm amber accents */
+    --background: 222 21% 6%;
+    --foreground: 0 0% 98%;
+    
+    /* Gold accent colors for premium features */
+    --gold-text: 43 70% 75%;
+    --gold-border: 43 60% 50%;
+    --gold-strong: 43 80% 60%;
+
+    --card: 222 18% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 220 18% 14%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Single amber accent - restricted to CTAs, active nav, running timer */
+    --primary: 37 91% 55%;
+    --primary-foreground: 220 20% 8%;
+
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 15% 16%;
+    --muted-foreground: 220 9% 90%;
+
+    --accent: 37 91% 55%;
+    --accent-foreground: 220 20% 8%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 45 20% 95%;
+
+    --border: 217 17% 15%;
+    --input: 217 17% 15%;
+    --ring: 37 91% 55%;
+
+    --radius: 0.75rem;
+
+    /* Status colors - Clear factory indicators */
+    --status-on-site: 142 71% 45%;
+    --status-on-break: 280 70% 60%;
+    --status-remote: 217 91% 60%;
+    --status-leave: 45 93% 47%;
+    --status-sick: 0 84% 60%;
+    --status-off: 220 10% 40%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(37 91% 55%), hsl(28 95% 45%));
+    --gradient-card: linear-gradient(180deg, hsl(220 18% 14%), hsl(220 18% 10%));
+    --gradient-hero: linear-gradient(135deg, hsl(220 20% 12%), hsl(220 25% 6%));
+
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(37 91% 55% / 0.2);
+    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.4);
+
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 45 20% 90%;
+    --sidebar-primary: 37 91% 55%;
+    --sidebar-primary-foreground: 220 20% 8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 45 20% 90%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 37 91% 55%;
+
+    /* SF Team Hub app shell — exact spec tokens */
+    --sf-bg: 222 22% 6%;          /* #0B0D11 */
+    --sf-card: 220 14% 10%;       /* #14171D */
+    --sf-border: 218 14% 15%;     /* #1F242C */
+    --sf-amber: 37 91% 55%;       /* #F5A623 */
+    --sf-green: 158 49% 48%;      /* #3FB68B */
+    --sf-red: 0 75% 59%;          /* #E54848 */
+    --sf-blue: 217 60% 60%;       /* muted blue for shifts */
+  }
+
+  .light,
+  .theme-light {
+    --background: 45 30% 97%;
+    --foreground: 220 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
+
+    --primary: 37 91% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 92%;
+    --secondary-foreground: 220 20% 12%;
+
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 37 91% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 37 91% 55%;
+
+    /* The staff shell paints these directly (bg-[hsl(var(--sf-bg))] etc.).
+       They were previously dark-only in :root, so light mode rendered dark
+       surfaces under dark text — unreadable for anyone whose phone is in
+       Light appearance. Light values keep the shell coherent. */
+    --sf-bg: 45 30% 97%;
+    --sf-card: 0 0% 100%;
+    --sf-border: 220 15% 86%;
+  }
+
+  /* Mixed: light body palette, but elevated surfaces stay dark */
+  .theme-mixed {
+    --background: 45 30% 97%;
+    --foreground: 220 20% 12%;
+    --primary: 37 91% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 92%;
+    --secondary-foreground: 220 20% 12%;
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 10% 40%;
+    --accent: 37 91% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 37 91% 55%;
+    --card: 220 18% 12%;
+    --card-foreground: 45 20% 95%;
+    --popover: 220 18% 14%;
+    --popover-foreground: 45 20% 95%;
+    /* Mixed = light page, dark cards. Card text is light, so sf-card stays dark. */
+    --sf-bg: 45 30% 97%;
+    --sf-card: 220 18% 12%;
+    --sf-border: 218 14% 22%;
+  }
+  .theme-mixed [data-surface="elevated"] {
+    background-color: hsl(220 18% 12%);
+    color: hsl(45 20% 95%);
+  }
+
+  /* HiveWire honey-gold tokens — aligned with Hive web HiveWire palette */
+  :root {
+    --hm-gold: 47 92% 56%;            /* honey gold, vivid yellow */
+    --hm-gold-soft: 47 92% 56% / 0.12;
+    --hm-gold-highlight: 50 100% 68%; /* bright honey for shimmer + active */
+    --hm-gold-glow: 50 100% 62%;      /* glow tone */
+    --hm-charcoal: 222 13% 14%;       /* #20222A */
+    --hm-cream: 44 90% 91%;           /* champagne-cream */
+    --hm-bg-top: 228 22% 5%;          /* #0A0B10 */
+    --hm-bg-bottom: 224 16% 10%;      /* #14161C */
+    --hm-surface-dark: 226 13% 12%;   /* #181B22 */
+    --hm-muted: 240 3% 56%;           /* #8B8C92 */
+  }
+}
+
+@layer utilities {
+  .hm-bg {
+    background-image: linear-gradient(135deg, hsl(var(--hm-bg-top)) 0%, hsl(var(--hm-bg-bottom)) 100%);
+  }
+  .hm-surface {
+    background-color: hsl(var(--hm-surface-dark));
+  }
+  /* Honeycomb backdrop — applied ONLY to thread message area (§4) */
+  .hm-honeycomb {
+    background-image:
+      linear-gradient(135deg, hsl(var(--hm-bg-top)) 0%, hsl(var(--hm-bg-bottom)) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='64' viewBox='0 0 56 64'><g fill='none' stroke='%23F5C518' stroke-opacity='0.08' stroke-width='1.2'><polygon points='14,2 42,2 56,18 42,34 14,34 0,18'/><polygon points='14,34 42,34 56,50 42,66 14,66 0,50'/></g></svg>");
+    background-blend-mode: normal;
+    background-repeat: no-repeat, repeat;
+    background-size: 100% 100%, 56px 64px;
+  }
+  .hm-amber-divider {
+    background-image: linear-gradient(to right, transparent, hsl(var(--hm-gold) / 0.35), transparent);
+  }
+  .hm-bubble-out {
+    background-color: hsl(var(--hm-charcoal));
+    color: hsl(var(--hm-gold));
+  }
+  .hm-bubble-in {
+    background-color: hsl(0 0% 100% / 0.04);
+    color: hsl(var(--hm-cream));
+  }
+  .hm-text-gold { color: hsl(var(--hm-gold)); }
+  .hm-text-cream { color: hsl(var(--hm-cream)); }
+  .hm-text-muted { color: hsl(var(--hm-muted)); }
+  .hm-active-row {
+    background-color: hsl(var(--hm-gold) / 0.05);
+    border-left: 3px solid hsl(var(--hm-gold));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-family: 'Outfit', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-black text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  html { background-color: #000; }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #FFFFFF;
+  }
+}
+
+@layer components {
+  .status-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold;
+  }
+
+  .status-on-site {
+    @apply bg-[hsl(var(--status-on-site)/0.15)] text-[hsl(var(--status-on-site))];
+  }
+
+  .status-on-break {
+    @apply bg-[hsl(var(--status-on-break)/0.15)] text-[hsl(var(--status-on-break))];
+  }
+
+  .status-remote {
+    @apply bg-[hsl(var(--status-remote)/0.15)] text-[hsl(var(--status-remote))];
+  }
+
+  .status-leave {
+    @apply bg-[hsl(var(--status-leave)/0.15)] text-[hsl(var(--status-leave))];
+  }
+
+  .status-sick {
+    @apply bg-[hsl(var(--status-sick)/0.15)] text-[hsl(var(--status-sick))];
+  }
+
+  .status-off {
+    @apply bg-[hsl(var(--status-off)/0.15)] text-[hsl(var(--status-off))];
+  }
+
+  .kiosk-button {
+    @apply w-full py-8 text-2xl font-bold rounded-2xl transition-all duration-200 active:scale-[0.98];
+  }
+
+  .card-industrial {
+    @apply border border-border rounded-xl shadow-[var(--shadow-card)];
+    background: hsl(222 18% 10%);
+  }
+
+  .glow-primary {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Service Ring Animations */
+@keyframes rainbow-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes ring-shimmer {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Glass Card styling */
+.glass-card {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Premium stat card styling */
+.premium-stat-card {
+  background: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+  border: 1px solid hsl(var(--gold-border) / 0.3);
+  backdrop-filter: blur(10px);
+}

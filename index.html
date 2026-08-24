@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>SF:Team Hub – Powered by Panacea</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/sf-crown-favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/sf-crown-favicon.png" />
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#f59e0b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SF:Team Hub" />
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    
+    <!-- PushAlert Push Notifications -->
+    <script type="text/javascript">
+      (function(d, t) {
+        var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+        g.src = "https://cdn.pushalert.co/integrate_eb6abf38f4ab0e66f3e33f95ccdc23c5.js";
+        s.parentNode.insertBefore(g, s);
+      }(document, "script"));
+    </script>
+    <meta name="description" content="Internal staff attendance and presence tracking. Sign in/out via tablet kiosk or mobile app." />
+    <meta name="author" content="Panacea" />
+
+    <meta property="og:title" content="SF:Team Hub – Powered by Panacea" />
+    <meta property="og:description" content="Internal staff attendance and presence tracking system" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og-image.png" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

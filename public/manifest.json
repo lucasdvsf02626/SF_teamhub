@@ -1,0 +1,40 @@
+{
+  "name": "SF:Team Hub",
+  "short_name": "TeamHub",
+  "description": "Your workday, made easier. Clock in, manage shifts, and book time off – all in one simple app.",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#0f1419",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Sign In",
+      "short_name": "Sign In",
+      "url": "/app",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Leave Requests",
+      "short_name": "Leave",
+      "url": "/app/leave",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
