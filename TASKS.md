@@ -138,15 +138,38 @@ Down from 25 to 5. The rest need breaking major bumps, so they need testing:
 
 ### 9. Clear the lint backlog
 
-70 errors, 67 of them `no-explicit-any`, concentrated in `src/pages/staff/`.
-CI reports lint without failing; once this is clear, remove `continue-on-error`
-from `.github/workflows/ci.yml`.
+Down from 70 errors to 54. `src/pages/staff/TimeOff.tsx` went from 19 to 2 and is
+the worked example — the same shape fixes most of the rest.
 
-- [ ] `src/pages/staff/TimeOff.tsx` — 19 errors, the worst offender
-- [ ] `src/pages/staff/Team.tsx` — 5
-- [ ] `src/pages/staff/Sickness.tsx`, `Settings.tsx` — 2 each
+The pattern:
+
+1. Declare an interface for the row the page actually uses, rather than leaning on
+   the generated Supabase types (which lag the `day_part` migration).
+2. Annotate the `queryFn` return type. Every `.filter`/`.map`/`.reduce` callback
+   below it then infers, and its `: any` can simply be deleted.
+3. For array literals with optional fields, declare the interface explicitly —
+   otherwise TypeScript infers a union and the optional fields are unreachable,
+   which is what forced the `(b as any)` casts.
+
+These are type-only edits, erased at compile time, so a passing `tsc --noEmit`
+means runtime behaviour is provably unchanged. That makes this safe to do without
+exercising the signed-in paths — which is why it was done here and the rest was
+not: each remaining file needs its own row shape decided.
+
+Remaining, roughly 1-5 errors each:
+
+- [ ] `src/pages/` — `LeaveRequests`, `ManagerApprovals`, `ManagerTeam`,
+      `TeamDirectory`, `TeamCalendar`, `ProfileCompletion`
+- [ ] `src/pages/staff/` — `Clock`, `Dashboard`, `Documents`, `Settings`,
+      `Sickness`, `Team`
+- [ ] `src/lib/supabase-helpers.ts`, `src/integrations/supabase/hive.ts`,
+      `src/hooks/useMyShifts.ts`, `src/contexts/ClockContext.tsx`
 - [ ] `tailwind.config.ts` — one `require()` import
-- [ ] Then remove `continue-on-error`
+- [ ] Then remove `continue-on-error` from `.github/workflows/ci.yml`
+
+Two `as any` casts in `TimeOff.tsx` were left in place deliberately: they are on
+Supabase insert/update calls and exist because the generated types lag the
+migration. Both already carry a comment saying so.
 
 ### 10. Split the four largest pages
 
