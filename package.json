@@ -9,7 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "scan:supply-chain": "node scripts/scan-supply-chain.mjs"
+    "scan:supply-chain": "node scripts/scan-supply-chain.mjs",
+    "map": "node scripts/codebase-map.mjs"
   },
   "dependencies": {
     "@capacitor-mlkit/barcode-scanning": "^8.0.0",
