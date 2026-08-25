@@ -190,13 +190,24 @@ will see stale clock-in state.
 - [ ] Add `vite-plugin-pwa`, network-first for navigation
 - [ ] Test that clock-in state is never served stale
 
-### 12. Get edge function source into version control
+### 12. Get edge function source into version control — **now urgent**
 
-38 functions run in production with their code outside version control. It cannot be
-reviewed, diffed, or restored from here. Deliberate, per `supabase/README.md` — but
-worth revisiting, since it is a single point of failure.
+38 functions run in production with their code outside version control. It
+cannot be reviewed, diffed, or restored — and it cannot be migrated to a new
+Supabase project either.
 
-- [ ] Decide whether to vendor the source into a separate repository
+`scripts/download-edge-functions.sh` pulls all 38 down in one pass. Run it while
+you still have access to the Hive project:
+
+```sh
+supabase login
+./scripts/download-edge-functions.sh zbltbvizmlvotayjjcum
+git add supabase/functions && git commit -m "Vendor edge function source"
+```
+
+- [ ] Downloaded and committed
+- [ ] Function secrets recorded (`supabase secrets list`) — they are not in the
+      code and not in any dump
 
 ### 13. Extend test coverage
 
@@ -241,6 +252,7 @@ There is a test that pins this, but it is a reminder, not a fix.
 - [x] Documented the Supabase project-ref guardrail and the unused env vars inline
 - [x] Added `npm run map` and published a visual codebase map
 - [x] Fixed the show-password tap target: 16x16 to 40x40, icon position unchanged
+- [x] Wrote MIGRATION.md and scripts/download-edge-functions.sh for the Sfmediapr move
 - [x] Added Vitest with 57 tests over leave-day, geofence and service-tier maths
 - [x] Browser-tested 16 routes at iPhone viewport — auth guard holds on all 7
       protected routes, no JS errors, no horizontal overflow
