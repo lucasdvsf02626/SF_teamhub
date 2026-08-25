@@ -38,7 +38,16 @@ fi
 
 # Function names come from the [functions.NAME] headers, so this list stays in
 # step with config.toml rather than being hardcoded here.
-mapfile -t FUNCTIONS < <(
+# Deliberately not `mapfile`: that is bash 4+, and macOS ships bash 3.2 as
+# /bin/bash, where this script would die before downloading anything.
+FUNCTIONS=()
+while IFS= read -r fn_name; do
+  # An if, not `[ -n ] && ...`: under `set -e` that idiom exits the script
+  # when the test fails, because the AND-list is the last command in the body.
+  if [ -n "$fn_name" ]; then
+    FUNCTIONS+=("$fn_name")
+  fi
+done < <(
   grep -oE '^[[:space:]]*\[functions\.[a-zA-Z0-9_-]+\]' "$CONFIG" \
     | sed -E 's/.*\[functions\.([a-zA-Z0-9_-]+)\].*/\1/' \
     | sort -u

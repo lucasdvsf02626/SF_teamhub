@@ -7,6 +7,17 @@ This is a **migration of a live system**, not a fresh build. There are ~66 staff
 accounts, statutory attendance and leave records, 51 tables, 74 migrations and
 38 edge functions in play. Read the whole document before starting.
 
+**Where the numbers come from.** Counts here are derived from this repository,
+not from the live Hive database — no one writing this had access to Hive.
+Migrations (74) and edge functions (38) are counted directly from
+`supabase/migrations/` and `supabase/config.toml`. Tables (51) are parsed from
+`CREATE TABLE` statements across the migrations. The ~66 staff figure comes from
+`.lovable/plan.md`. The cron count is inferred from function names, not observed.
+
+So they describe what the repo *says* should exist. Confirm each against the
+live project before relying on it — a drift between the two is itself worth
+knowing about before you migrate.
+
 ---
 
 ## 0. Decide this first — it cannot be undone later
@@ -105,10 +116,24 @@ on the morning of 18 Aug."
 
 Options, least risky first:
 
-1. **Don't migrate auth at all.** If the goal is a project under SF Media PR
-   billing/ownership rather than a new database, ask Supabase support about
-   transferring the existing project to the new organisation. Same database,
-   same users, no migration. **Try this before anything else.**
+1. **Don't migrate auth at all — transfer the project instead.** If the goal is
+   ownership and billing under SF Media PR rather than genuinely new data, move
+   the existing project to the new organisation. Same database, same users, no
+   migration, none of the risk in this document. **Establish whether this is
+   possible before doing any other work here** — it may delete the rest of this
+   runbook.
+
+   It is self-serve, not a support ticket: Project Settings → General →
+   Transfer project. But check the prerequisites first, because that is where
+   it tends to fail:
+
+   | Prerequisite | Watch out for |
+   |---|---|
+   | No active GitHub integration on the project | Section 6 notes Lovable syncs into this repo — likeliest blocker, check first |
+   | Target org has a free project slot | Free plan caps active projects per org. A scratch project can consume the slot the transfer needs |
+   | You own the source org and belong to the target | — |
+   | No log drains, no project-scoped roles | — |
+   | **Transfer does not change region** | See 4.2 — if the region is wrong, transfer will not fix it |
 2. **Migrate users, force a password reset.** Copy user rows via the Auth Admin
    API, then have every member of staff reset their password on first sign-in.
    Predictable, but it needs comms to staff and a working reset email flow —
@@ -120,6 +145,7 @@ Options, least risky first:
 Whichever you pick: **rehearse it on a throwaway project first, with a copy of
 the data.** Do not first attempt this on a Monday morning.
 
+- [ ] Transfer prerequisites checked FIRST (15 minutes, may end this project)
 - [ ] Option chosen: `________________`
 - [ ] Rehearsed on a scratch project
 - [ ] Staff comms drafted (if a reset is needed)
@@ -140,16 +166,40 @@ supabase db dump --schema public --data-only -f dump/data.sql   # rows
 supabase db dump --schema auth         -f dump/auth-schema.sql  # inspect only
 ```
 
-**RLS policies do not always survive a plain schema dump — verify explicitly:**
+**RLS needs two separate things to be true, and a policy dump only proves one.**
+
+Supabase's own migration docs state that RLS *status* on tables is not
+migrated. Policies come across; the per-table on-switch often does not. And
+`pg_policies` lists a table's policies whether or not row security is actually
+enabled on it — so a policy count can match perfectly while the table sits wide
+open to anyone holding the anon key, which on a mobile build is everyone with
+the app installed.
+
+Export the policies for reference:
 
 ```sql
 select schemaname, tablename, policyname, roles, cmd, qual, with_check
 from pg_policies where schemaname = 'public' order by tablename;
 ```
 
-Save that output. It is the security model of the whole application, and if it
-does not arrive on the new project the database is wide open to anyone holding
-the anon key — which, on a mobile build, is everyone with the app installed.
+But **this** is the check that answers the question. Run it on both projects
+and compare:
+
+```sql
+select c.relname,
+       c.relrowsecurity as rls_enabled,
+       count(p.polname)  as policies
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+left join pg_policy p on p.polrelid = c.oid
+where n.nspname = 'public' and c.relkind = 'r'
+group by 1, 2
+order by rls_enabled, 1;
+```
+
+Any row with `rls_enabled = false` is exposed. Any row with `rls_enabled = true`
+and `policies = 0` denies everyone and will break the app silently. Both
+failures are invisible to a policy-count comparison.
 
 Also capture scheduled jobs:
 
@@ -159,16 +209,25 @@ select * from cron.job;
 
 - [ ] Schema dumped
 - [ ] Data dumped
-- [ ] RLS policies exported and counted
+- [ ] RLS policies exported
+- [ ] `relrowsecurity` recorded per table (not just the policy count)
 - [ ] Cron jobs recorded
 
 ### 4.2 Stand up Sfmediapr
 
-- [ ] Project created, region matching Hive (`eu-west-1`) to keep latency and
-      data residency the same
+- [ ] Region chosen deliberately. **Note: this document previously asserted Hive
+      is in `eu-west-1`. That was never verified** — it was inferred from the
+      unrelated `epltxklawpcxxbaleswg` project. Check Hive's actual region in its
+      dashboard before matching anything.
+
+      A region cannot be changed later, and a project transfer does not move it,
+      so this is a one-way door. For UK staff records `eu-west-2` (London) is a
+      defensible choice on its own merits even if Hive is elsewhere — just make
+      it a decision, not an accident.
 - [ ] Schema applied
 - [ ] `select count(*) from pg_tables where schemaname='public'` returns **51**
-- [ ] RLS re-applied, and the policy count matches what you exported
+- [ ] RLS re-applied — verified with the `relrowsecurity` query above, on both
+      projects, comparing row by row. A matching policy count is NOT sufficient.
 - [ ] Extensions present (`btree_gist` is required by the pay-period
       non-overlap constraint — see `.lovable/plan.md`)
 
