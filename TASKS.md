@@ -175,15 +175,37 @@ worth revisiting, since it is a single point of failure.
 
 - [ ] Decide whether to vendor the source into a separate repository
 
-### 13. Add tests
+### 13. Extend test coverage
 
-There is no test framework at all — no runner, no test files. For an app that
-calculates pay and statutory leave, the reconciliation and Bradford-score logic
-deserve coverage first.
+Vitest is now set up with 57 tests over the leave-day, geofencing and
+service-tier maths — the calculations that decide what staff are actually owed.
+`npm test` runs them, and CI runs them on every push.
 
-- [ ] Add Vitest
-- [ ] Cover attendance reconciliation and leave-balance maths
-- [ ] Add to the CI job
+Still uncovered:
+
+- [ ] `leave-year-helpers.ts` — leave year boundaries
+- [ ] `sickness-pattern-helpers.ts` — Bradford factor scoring
+- [ ] `uk-bank-holidays.ts` — the display list, which must agree with the fixture in `leaveDays.ts`
+- [ ] Component tests — would need jsdom and `@testing-library/react`, neither installed
+- [ ] The 38 edge functions — untestable from here, their source is not in this repo
+
+### 14. Two small things found while writing tests
+
+- [ ] `service-tier-helpers.ts` — `calculateProRataAllowance` declares `const today`
+      and never uses it. Harmless dead code; removing it makes the function
+      visibly pure.
+- [ ] `service-tier-helpers.ts` — the comment on the final tier says "10+ years"
+      but `min_years` is 15. The code is right, the comment is stale.
+
+### 15. The bank holiday fixture expires in 2030
+
+`leaveDays.ts` hardcodes England & Wales bank holidays for 2024-2030. After that
+every date counts as a working day, so leave would be over-charged silently.
+There is a test that pins this, but it is a reminder, not a fix.
+
+- [ ] Extend the list before 2030, or source the dates from `gov.uk`'s bank holiday API
+- [ ] Keep it in sync with the copy in `hive-vault-guard/src/lib/leaveDays.ts` —
+      the two apps share the Hive database and must agree on the count
 
 ---
 
@@ -196,5 +218,6 @@ deserve coverage first.
 - [x] Documented the Supabase project-ref guardrail and the unused env vars inline
 - [x] Added `npm run map` and published a visual codebase map
 - [x] Fixed the show-password tap target: 16x16 to 40x40, icon position unchanged
+- [x] Added Vitest with 57 tests over leave-day, geofence and service-tier maths
 - [x] Browser-tested 16 routes at iPhone viewport — auth guard holds on all 7
       protected routes, no JS errors, no horizontal overflow
