@@ -99,6 +99,31 @@ UK staff data this is a GDPR question, not just a performance one.
 - [ ] Confirm the `/privacy` policy names both
 - [ ] Consider self-hosting the two fonts — also removes a render-blocking request
 
+### 7b. "Trust this device for 30 days" defaults to ON — decide before launch
+
+`src/pages/Auth.tsx:64` sets `useState(true)`, so the box is ticked before anyone
+touches it. Verified in a browser.
+
+On a personal phone that is good UX. But the app's own description says staff
+"sign in/out via **tablet kiosk** or mobile app" — and on a shared kiosk this leaves
+a 30-day trusted session behind for whoever signs in next.
+
+This is a product decision, not a bug, so it has been left alone. The options:
+
+- [ ] Default it off, and let people opt in
+- [ ] Keep it on for personal devices, force it off in kiosk mode
+- [ ] Leave as-is, if the kiosk is not actually a sign-in surface
+
+### 7c. Remaining small tap targets
+
+Measured at iPhone 13 width. The show-password toggle was 16x16 and has been fixed
+to 40x40 (the icon did not move). What is left is minor but worth a pass:
+
+- [ ] "Trust this device" row is 342x20 — the label forwards taps correctly, so
+      width is fine, but 20px height is under the 24px WCAG 2.2 minimum
+- [ ] Email and password inputs are 40px tall, just under the 44px iOS guideline
+- [ ] "Forgot password?", "Desktop view" and the footer links sit at 14-20px tall
+
 ### 8. Remaining dependency vulnerabilities
 
 Down from 25 to 5. The rest need breaking major bumps, so they need testing:
@@ -170,5 +195,6 @@ deserve coverage first.
 - [x] Patched dependencies: 25 vulnerabilities down to 5, critical resolved
 - [x] Documented the Supabase project-ref guardrail and the unused env vars inline
 - [x] Added `npm run map` and published a visual codebase map
+- [x] Fixed the show-password tap target: 16x16 to 40x40, icon position unchanged
 - [x] Browser-tested 16 routes at iPhone viewport — auth guard holds on all 7
       protected routes, no JS errors, no horizontal overflow
