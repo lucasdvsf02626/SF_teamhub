@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "SF:Team Hub",
+    "slug": "sf-team-hub",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "sfteamhub",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0f1419"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.supplementfactory.teamhub"
+    },
+    "android": {
+      "package": "com.supplementfactory.teamhub",
+      "adaptiveIcon": { "backgroundColor": "#0f1419" }
+    }
+  }
+}
