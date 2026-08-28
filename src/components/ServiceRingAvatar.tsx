@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { getServiceTierDisplay, getLighterColor, getDarkerColor, RING_SIZES, type RingSize, type ServiceTierDisplay } from "@/lib/serviceColors";
+import { getServiceTierDisplay, getLighterColor, getDarkerColor, RING_SIZES, type RingSize, type ServiceTierDisplay } from '@sf/core';
 import { cn } from "@/lib/utils";
 
 interface ServiceRingAvatarProps {

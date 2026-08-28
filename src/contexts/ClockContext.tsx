@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState, ReactNode, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGeolocation } from "@/hooks/useGeolocation";
-import { isWithinGeofence } from "@/lib/geo-helpers";
+import { isWithinGeofence } from '@sf/core';
 import {
   recordAttendanceEvent,
   fetchGeofenceSiteForUser,

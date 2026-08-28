@@ -19,6 +19,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@sf/core": [
+        "./packages/core/src/index.ts"
       ]
     },
     "skipLibCheck": true,
@@ -27,6 +30,7 @@
     "useDefineForClassFields": true
   },
   "include": [
-    "src"
+    "src",
+    "packages/core/src"
   ]
 }

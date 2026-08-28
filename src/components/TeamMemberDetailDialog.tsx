@@ -10,7 +10,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { ServiceRingAvatar, getInitials } from "@/components/ServiceRingAvatar";
 import { UserAvatar } from "@/components/UserAvatar";
 import { Mail, Phone, Cake, Palmtree, ThermometerSnowflake, Award } from "lucide-react";
-import { calculateYearsOfService } from "@/lib/service-tier-helpers";
+import { calculateYearsOfService } from '@sf/core';
 import type { PresenceStatus } from "@/types";
 
 interface TeamMemberDetailDialogProps {

@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { JOB_TITLES, DEPARTMENTS } from "@/lib/staff-constants";
+import { JOB_TITLES, DEPARTMENTS } from '@sf/core';
 
 export default function ProfileCompletion() {
   const navigate = useNavigate();

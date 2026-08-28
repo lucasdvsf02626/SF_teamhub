@@ -54,6 +54,9 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Shared business logic. Lives outside src/ so the React Native app can
+      // import the identical implementation rather than a copy.
+      "@sf/core": path.resolve(__dirname, "./packages/core/src"),
     },
   },
 }));

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/hive";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart, type LeaveDaySpan } from "@/lib/leaveDays";
+import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart, type LeaveDaySpan } from '@sf/core';
 
 function Ring({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = max > 0 ? Math.min(1, value / max) : 0;

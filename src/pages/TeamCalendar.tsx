@@ -23,7 +23,7 @@ import {
   parseISO,
   getYear
 } from "date-fns";
-import { getUKBankHolidays, isBankHoliday, type BankHoliday } from "@/lib/uk-bank-holidays";
+import { getUKBankHolidays, isBankHoliday, type BankHoliday } from '@sf/core';
 
 interface LeaveRequest {
   id: string;
