@@ -88,81 +88,97 @@ first; it is the longest pole that involves no engineering.
 
 ---
 
-## 3 · What is actually blocking, verified in the repo today
+## 3 · What is actually blocking, verified in the repo
+
+Items marked **done** were fixed on 31 Aug — see the commit that added this section.
 
 ### P0 — will crash, or will ship malware
 
-**1. The app will crash the first time anyone taps clock-in.**
-`ios/App/App/Info.plist` declares exactly one usage string, `NSCameraUsageDescription`.
+**1. ~~The app crashes the first time anyone taps clock-in.~~ done.**
+`Info.plist` declared exactly one usage string, `NSCameraUsageDescription`, while
 `src/hooks/useGeolocation.ts` calls `Geolocation.getCurrentPosition()`. iOS terminates an
 app the moment it requests location with no `NSLocationWhenInUseUsageDescription` in the
-bundle. Not a warning, not a denied permission — an immediate crash, on the core feature.
-Add:
+bundle — not a warning, not a denied permission, an immediate crash on the core feature.
+`NSLocationWhenInUseUsageDescription` is now present.
 
-- `NSLocationWhenInUseUsageDescription`
-- `NSLocationAlwaysAndWhenInUseUsageDescription` — only if background geofencing ships
-- `NSPhotoLibraryUsageDescription` — only if `@capacitor/camera` starts being used
-
-Write them as sentences a member of staff would accept, naming the benefit. Apple rejects
-strings like "needs location".
+*Not added, deliberately:* `NSLocationAlwaysAndWhenInUseUsageDescription` and
+`NSPhotoLibraryUsageDescription`. Nothing in the app requests background location or the
+photo library, and declaring permissions you do not use draws review questions. Add the
+Always string only when background geofencing actually ships.
 
 **2. `main` still carries the payload.** `postcss.config.js` on `main` is 31,473 bytes with
 the obfuscated line. Build the app from `main` and the payload ships **inside the binary on
 every staff phone**. `LAUNCH-LIST.md` Gate 1 covers this: check Lovable's copy first, then
 merge PR #2, then rotate credentials. Nothing else in this document matters until that is done.
 
-**3. The Xcode project contains no app.** `ios/App/App/public/` is empty — `npx cap sync ios`
-has never been run. The project builds an empty shell today.
-
-**4. No signed-in path has ever been tested.** `LAUNCH-LIST.md` Gate 3. You cannot submit a
+**3. No signed-in path has ever been tested.** `LAUNCH-LIST.md` Gate 3. You cannot submit a
 clock-in app whose clock-in has never been run against the real database. This is the
 biggest gap and the one only you can close.
 
 ### P1 — required for submission
 
-**5. Privacy manifest.** No `PrivacyInfo.xcprivacy` anywhere in `ios/`. Required since May
-2024 for apps using "required reason" APIs and for SDKs on Apple's list. You will need
-declarations covering at minimum `UserDefaults` and file-timestamp access.
+**4. ~~Privacy manifest.~~ done.** `ios/App/App/PrivacyInfo.xcprivacy` now exists and is
+registered in the Xcode project (file reference, App group, Resources build phase). It
+declares no tracking, the five data types the app collects, and the two required-reason API
+categories Capacitor uses — `UserDefaults` (CA92.1) and `FileTimestamp` (C617.1).
 
-**6. App Privacy label** in App Store Connect. This app collects precise location, name,
-email and employment data. Declare all of it, and link each to its purpose.
+**Verify this when you first archive.** Xcode generates a privacy report from your manifest
+plus every SDK's own; if the MLKit barcode scanner or a Capacitor plugin declares a category
+this manifest omits, add it. The report is the source of truth, not this file.
 
-**7. Account deletion — Guideline 5.1.1(v).** The rule targets apps that let users *create*
+**5. App Privacy label** in App Store Connect. Must match the manifest above: precise
+location, email, name, user ID, diagnostic data — each linked to the user, none used for
+tracking, all for app functionality.
+
+**6. Account deletion — Guideline 5.1.1(v).** The rule targets apps that let users *create*
 accounts. Yours are manager-created, which is a reasonable exemption argument — but
 reviewers flag it often. Decide your answer before review, not during it.
 
-**8. A demo account — Guideline 2.1.** Every login-gated app needs working reviewer
+**7. A demo account — Guideline 2.1.** Every login-gated app needs working reviewer
 credentials. Create a real staff account seeded with plausible shifts and leave, and put it
 in the review notes.
 
-**9. Privacy policy and support URLs.** `src/pages/PrivacyPolicy.tsx` and `TermsOfUse.tsx`
+**8. Privacy policy and support URLs.** `src/pages/PrivacyPolicy.tsx` and `TermsOfUse.tsx`
 exist — they need to be publicly reachable URLs before submission.
 
 **Not a blocker:** Sign in with Apple (**Guideline 4.8**) is only required when you offer
 third-party social login. `src/pages/Auth.tsx` is email and password only, so it does not apply.
 
-### P2 — dead config worth clearing before review
+### P2 — still open
 
-**10. `BackgroundGeolocation` is configured but not installed.** `capacitor.config.ts`
-carries a config block, including a user-facing "tracking your location for auto
-sign-in/out" message, for a plugin absent from `package.json`. If auto clock-in by geofence
-is a promised feature, it does not exist. Either install the plugin and build it, or delete
-the block — do not ship a config that claims background tracking you do not do.
+**9. ~~`BackgroundGeolocation` configured but not installed.~~ done.** `capacitor.config.ts`
+carried a config block — including a user-facing "tracking your location for auto
+sign-in/out" notification — for a plugin absent from `package.json`. Capacitor ignored it
+and nothing tracked anything. The block is removed, with a comment recording what real
+background geofencing would need: a plugin, `UIBackgroundModes`, and the Always usage
+string. All three, or it does not work.
 
-**11. `@capacitor/push-notifications` and `@capacitor/camera` are installed but never
-imported.** Push notifications are not implemented. Unused SDKs that touch sensitive APIs
-still need privacy-manifest entries and still invite review questions. Remove them or use them.
+**If auto clock-in by geofence was a promised feature, it does not exist.** Worth knowing
+before you describe the app to staff.
 
----
+**10. `@capacitor/push-notifications` and `@capacitor/camera` are installed but never
+imported.** Push notifications are not implemented — the config block in
+`capacitor.config.ts` is set up and waiting, but no code subscribes. `@capacitor/camera` is
+unused entirely; the barcode scanner is a separate plugin and does work. Left in place
+rather than removed, since push is a plausible v1.1 feature, but they are dead weight in the
+binary today and each unused SDK is one more privacy manifest to reconcile.
+
+**11. Google Fonts loads from a CDN.** `src/index.css` imports two families from
+`fonts.googleapis.com`. In a browser that is ordinary; in a native app it means a request to
+Google on every cold start, text rendering in a fallback face until it returns, and — on a
+factory floor with poor signal — an app that looks broken for a beat. Self-host the fonts
+before launch. `LAUNCH-LIST.md` also flags it as a consent question.
 
 ## 4 · The plan
 
 Weeks assume one person on it part-time, with a Mac. Phases 0 and 1 run in parallel.
 
-### Phase 0 — accounts (week 1, mostly waiting)
-- Choose Custom App vs public App Store (§2)
-- Start Apple Developer Program enrolment — get the D-U-N-S number moving first
-- If Custom App: enrol the organisation in Apple Business Manager
+### Phase 0 — accounts (week 1)
+- ~~Apple Developer Program membership~~ — **in hand as of 31 Aug**
+- **Choose Custom App vs public App Store (§2).** Still open, and it is the decision that
+  shapes everything after: a Custom App needs the organisation enrolled in Apple Business
+  Manager, a public listing needs a Guideline 4.2 answer ready
+- Create the App ID and the App Store Connect record for `com.supplementfactory.teamhub`
 - Confirm you have a Mac with current Xcode, or set up a macOS CI runner
 
 ### Phase 1 — close the security gate (week 1, blocking)
@@ -172,12 +188,16 @@ Weeks assume one person on it part-time, with a Mac. Phases 0 and 1 run in paral
 - Merge PR #2, rotate credentials
 
 ### Phase 2 — make the iOS build real (week 2)
-- Add the missing `Info.plist` usage strings (P0-1)
-- Add `PrivacyInfo.xcprivacy` (P1-5)
-- Clear the dead plugin config (P2-10, P2-11)
+- ~~`Info.plist` usage strings~~ — done
+- ~~`PrivacyInfo.xcprivacy`, registered in the Xcode project~~ — done
+- ~~Clear the dead `BackgroundGeolocation` config~~ — done
+- Self-host the Google Fonts (P2-11)
 - `npm run build && npx cap sync ios`
 - Open `ios/App/App.xcworkspace`, set the signing team, archive
+- Check Xcode's generated privacy report against `PrivacyInfo.xcprivacy` (P1-4)
 - Icon and splash are already in place and compliant — nothing to do there
+
+Everything in this phase that can be done without a Mac now is. What remains needs Xcode.
 
 ### Phase 3 — prove the daily loop (weeks 2–3, the real work)
 - `LAUNCH-LIST.md` Gate 3 end to end **on a device**, not a simulator: clock in, clock out,

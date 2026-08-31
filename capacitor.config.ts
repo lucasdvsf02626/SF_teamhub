@@ -18,11 +18,19 @@
     },
      PushNotifications: {
        presentationOptions: ["badge", "sound", "alert"]
-     },
-     BackgroundGeolocation: {
-       backgroundMessage: "SF:Team Hub is tracking your location for auto sign-in/out",
-       backgroundTitle: "Location Active"
      }
+     // No BackgroundGeolocation block. There was one here, configured with a
+     // "tracking your location for auto sign-in/out" notification, but no
+     // background geolocation plugin is installed — Capacitor silently ignored
+     // it and nothing tracked anything. Shipping a config that announces
+     // background tracking the app does not do is the kind of thing App Review
+     // asks about, so it is gone.
+     //
+     // Geofencing today is foreground only: useGeolocation.ts reads a position
+     // when you clock in, and ClockContext watches it while the app is open.
+     // Real background geofencing needs a plugin, UIBackgroundModes, and
+     // NSLocationAlwaysAndWhenInUseUsageDescription — all three, or it does not
+     // work. See APP-STORE.md.
    }
  };
  

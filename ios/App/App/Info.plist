@@ -49,5 +49,7 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Team Hub uses the camera to scan the clock-in poster and Supplement Factory codes.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Team Hub checks you are at your site when you clock in, and clocks you out automatically if you leave. Your location is only checked while the app is open.</string>
 </dict>
 </plist>
