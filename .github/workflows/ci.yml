@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, lint, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Runs before the build so a tampered config is caught prior to executing
+      # any project code. See scripts/scan-supply-chain.mjs.
+      - name: Supply-chain scan
+        run: npm run scan:supply-chain
+
+      - name: Typecheck
+        run: npx tsc --noEmit -p tsconfig.app.json
+
+      # Lint currently has a pre-existing backlog, so it reports without
+      # failing the job. Remove continue-on-error once the backlog is cleared.
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

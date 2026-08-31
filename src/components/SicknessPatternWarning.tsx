@@ -1,5 +1,5 @@
 import { AlertTriangle, Info, AlertCircle, TrendingUp } from "lucide-react";
-import { PatternWarning, SicknessMetrics } from "@/lib/sickness-pattern-helpers";
+import { PatternWarning, SicknessMetrics } from '@sf/core';
 
 interface SicknessPatternWarningProps {
   currentMetrics: SicknessMetrics;

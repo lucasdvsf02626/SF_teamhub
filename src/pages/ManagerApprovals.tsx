@@ -28,9 +28,9 @@ import {
   Inbox,
   Paperclip
 } from "lucide-react";
-import { getLeaveYearDates } from "@/lib/leave-year-helpers";
-import { calculateSicknessMetrics, detectPatterns, type SickRequest } from "@/lib/sickness-pattern-helpers";
-import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart } from "@/lib/leaveDays";
+import { getLeaveYearDates } from '@sf/core';
+import { calculateSicknessMetrics, detectPatterns, type SickRequest } from '@sf/core';
+import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart } from '@sf/core';
 
 // leave_requests.request_type: holiday | sickness | lieu | closure | other
 type RequestType = "holiday" | "sickness" | "lieu" | "closure" | "other";

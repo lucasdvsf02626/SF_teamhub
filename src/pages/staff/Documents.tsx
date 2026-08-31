@@ -14,7 +14,7 @@ import { Camera, CheckCircle2, Clock3, Loader2, Upload, XCircle } from "lucide-r
 import {
   DOC_GUIDANCE, IDENTITY_DOC_KEYS, PHOTO_RULES_OK, PHOTO_RULES_BAD,
   ACCEPTED_MIME, validateDocFile,
-} from "@/lib/documentGuidance";
+} from '@sf/core';
 
 interface StaffDocRow {
   id: string;

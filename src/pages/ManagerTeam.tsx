@@ -7,7 +7,7 @@ import { ServiceRingAvatar, getInitials } from "@/components/ServiceRingAvatar";
 import { supabase } from "@/integrations/supabase/hive";
 import { useAuth } from "@/contexts/AuthContext";
 import { fetchSites, formatDuration, fetchPresenceMapForDate } from "@/lib/supabase-helpers";
-import { getServiceInfo, DEFAULT_SERVICE_TIERS } from "@/lib/service-tier-helpers";
+import { getServiceInfo, DEFAULT_SERVICE_TIERS } from '@sf/core';
 import type { PresenceStatus } from "@/types";
 import { 
   Select,

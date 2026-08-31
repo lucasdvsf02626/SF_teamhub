@@ -4,11 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Palmtree, Thermometer, Loader2, Clock } from "lucide-react";
-import { getLeaveYearDates, formatLeaveYearPeriod } from "@/lib/leave-year-helpers";
-import { getServiceInfo, DEFAULT_SERVICE_TIERS } from "@/lib/service-tier-helpers";
-import { getServiceTierDisplay } from "@/lib/serviceColors";
+import { getLeaveYearDates, formatLeaveYearPeriod } from '@sf/core';
+import { getServiceInfo, DEFAULT_SERVICE_TIERS } from '@sf/core';
+import { getServiceTierDisplay } from '@sf/core';
 import { format } from "date-fns";
-import { requestDays } from "@/lib/leaveDays";
+import { requestDays } from '@sf/core';
 
 interface LeaveBalance {
   id: string;

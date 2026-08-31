@@ -1,6 +1,6 @@
 import { AlertTriangle, TrendingUp, Calendar, Activity, FileText, Paperclip } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { SicknessMetrics, PatternWarning } from "@/lib/sickness-pattern-helpers";
+import type { SicknessMetrics, PatternWarning } from '@sf/core';
 
 interface ManagerPatternAlertProps {
   userId: string;

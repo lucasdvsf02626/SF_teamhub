@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/hive";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart } from "@/lib/leaveDays";
+import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart, type LeaveDaySpan } from '@sf/core';
 
 function Ring({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = max > 0 ? Math.min(1, value / max) : 0;
@@ -41,6 +41,28 @@ const DURATIONS: { value: LeaveDayPart; label: string }[] = [
   { value: "am", label: "Half day, AM" },
   { value: "pm", label: "Half day, PM" },
 ];
+
+// The generated Supabase types predate the 2026-08-17 day_part migration, so
+// the row shape this page relies on is declared here rather than inferred.
+interface LeaveRequestRow extends LeaveDaySpan {
+  id: string;
+  status: string;
+  request_type: string;
+  reason: string | null;
+  created_at: string;
+}
+
+// Not every card carries a unit or a caption, so the optional fields have to be
+// declared — otherwise TypeScript infers a union and none of them are reachable.
+interface BalanceCard {
+  label: string;
+  used: number;
+  total: number;
+  color: string;
+  unit?: string;
+  captionText?: string;
+  captionOnly?: boolean;
+}
 
 export default function StaffTimeOff() {
   const { user } = useAuth();
@@ -78,14 +100,16 @@ export default function StaffTimeOff() {
 
   const { data: requests = [], isLoading } = useQuery({
     queryKey: ["my-leave-requests", user?.id],
-    queryFn: async () => {
+    queryFn: async (): Promise<LeaveRequestRow[]> => {
       const { data, error } = await supabase
         .from("leave_requests")
         .select("*")
         .eq("person_id", user!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data ?? [];
+      // Cast for the same reason as the interface above: the generated types
+      // lag the day_part migration.
+      return (data ?? []) as unknown as LeaveRequestRow[];
     },
     enabled: !!user,
   });
@@ -94,19 +118,19 @@ export default function StaffTimeOff() {
   // weekends and England & Wales bank holidays excluded. Cancelled rows are
   // never counted.
   const annualUsed = requests
-    .filter((r: any) => r.status === "approved" && (r.request_type === "holiday" || r.request_type === "leave"))
-    .reduce((s: number, r: any) => s + requestDays(r), 0);
+    .filter((r) => r.status === "approved" && (r.request_type === "holiday" || r.request_type === "leave"))
+    .reduce((s: number, r) => s + requestDays(r), 0);
   const sickUsed = requests
-    .filter((r: any) => r.status === "approved" && r.request_type === "sickness")
-    .reduce((s: number, r: any) => s + requestDays(r), 0);
+    .filter((r) => r.status === "approved" && r.request_type === "sickness")
+    .reduce((s: number, r) => s + requestDays(r), 0);
   const lieuUsed = requests
-    .filter((r: any) => r.status === "approved" && r.request_type === "lieu")
-    .reduce((s: number, r: any) => s + requestDays(r), 0);
-  const pendingCount = requests.filter((r: any) => r.status === "pending").length;
+    .filter((r) => r.status === "approved" && r.request_type === "lieu")
+    .reduce((s: number, r) => s + requestDays(r), 0);
+  const pendingCount = requests.filter((r) => r.status === "pending").length;
 
   const annualTotal = (leaveBalance?.annual_leave_allowance ?? 0) + (leaveBalance?.carry_over_days ?? 0);
 
-  const balances = [
+  const balances: BalanceCard[] = [
     { label: "Annual",   used: annualUsed, total: annualTotal, color: "hsl(var(--sf-amber))" },
     { label: "Sick",     used: sickUsed,   total: Math.max(sickUsed, 1), color: "hsl(var(--sf-red))", captionText: "days used" },
     { label: "Remaining", used: Math.max(annualTotal - annualUsed, 0), total: Math.max(annualTotal, 1), color: "hsl(var(--sf-green))" },
@@ -132,12 +156,12 @@ export default function StaffTimeOff() {
       setStartDate(""); setEndDate(""); setReason(""); setDayPart("full"); setRequestType("holiday");
       toast({ title: "Request submitted", description: "Awaiting your manager's approval." });
     },
-    onError: (e: any) => toast({ title: "Couldn't submit", description: e?.message, variant: "destructive" }),
+    onError: (e: Error) => toast({ title: "Couldn't submit", description: e?.message, variant: "destructive" }),
   });
 
   // Cancel, never delete: own pending rows, or approved rows starting later.
   const todayIso = format(new Date(), "yyyy-MM-dd");
-  const canCancel = (r: any) =>
+  const canCancel = (r: LeaveRequestRow) =>
     r.status === "pending" || (r.status === "approved" && r.start_date > todayIso);
 
   const cancel = useMutation({
@@ -153,11 +177,11 @@ export default function StaffTimeOff() {
       qc.invalidateQueries({ queryKey: ["my-leave-requests"] });
       toast({ title: "Request cancelled", description: "It no longer counts towards your balance." });
     },
-    onError: (e: any) => toast({ title: "Couldn't cancel", description: e?.message, variant: "destructive" }),
+    onError: (e: Error) => toast({ title: "Couldn't cancel", description: e?.message, variant: "destructive" }),
   });
 
   // Amend = cancel the old row, then prefill a fresh form with its values.
-  const amend = (r: any) => {
+  const amend = (r: LeaveRequestRow) => {
     cancel.mutate(r.id, {
       onSuccess: () => {
         setRequestType(r.request_type === "lieu" ? "lieu" : "holiday");
@@ -181,12 +205,12 @@ export default function StaffTimeOff() {
             <div className="relative">
               <Ring value={b.used} max={b.total} color={b.color} />
               <div className="absolute inset-0 grid place-items-center font-semibold text-white tabular-nums" style={{ fontFamily: "'Geist Mono', monospace", fontSize: String(b.used).length > 2 ? 16 : 22 }}>
-                {b.used}{(b as any).captionOnly ? "" : ((b as any).unit ?? "")}
+                {b.used}{b.captionOnly ? "" : (b.unit ?? "")}
               </div>
             </div>
             <div>
               <div className="text-sm font-semibold text-white/90">{b.label}</div>
-              <div className="text-xs text-white/60 truncate">{(b as any).captionText ?? `of ${b.total}${(b as any).unit ?? ""}`}</div>
+              <div className="text-xs text-white/60 truncate">{b.captionText ?? `of ${b.total}${b.unit ?? ""}`}</div>
             </div>
           </SfCard>
         ))}
@@ -266,7 +290,7 @@ export default function StaffTimeOff() {
           {isLoading ? <p className="text-sm text-muted-foreground">Loading…</p> : (
             <ul className="divide-y divide-[hsl(var(--sf-border))]">
               {requests.length === 0 && <li className="py-6 text-sm text-muted-foreground text-center">No requests yet.</li>}
-              {requests.slice(0, 12).map((h: any) => (
+              {requests.slice(0, 12).map((h) => (
                 <li key={h.id} className={cn("py-3 flex items-center gap-3", h.status === "cancelled" && "opacity-50")}>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-white/90 font-medium flex items-center gap-2 flex-wrap">

@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useClock } from "@/contexts/ClockContext";
 import { useHaptic } from "@/hooks/useHaptic";
 import { getTodayStatus, formatDuration } from "@/lib/supabase-helpers";
-import { getServiceInfo, DEFAULT_SERVICE_TIERS } from "@/lib/service-tier-helpers";
+import { getServiceInfo, DEFAULT_SERVICE_TIERS } from '@sf/core';
 import { supabase } from "@/integrations/supabase/hive";
 import { toast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";

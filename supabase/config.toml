@@ -1,3 +1,18 @@
+# project_id below names the LEGACY project (tiornvtwymjhsrrpbwvr) ON PURPOSE.
+# Do not "fix" it to the live Hive ref. See supabase/README.md.
+#
+# The app runs against the Hive database (zbltbvizmlvotayjjcum), pinned in
+# src/integrations/supabase/client.ts. Pointing this file at the retired
+# project is a deliberate guardrail: it means a careless `supabase functions
+# deploy` or `db push` from this repo cannot land on the live Hive.
+#
+# To act on the live database, link explicitly and deliberately:
+#     supabase link --project-ref zbltbvizmlvotayjjcum
+#
+# The 38 [functions] entries below are declarations only — supabase/functions/
+# does not exist in this repo, by design. That code is deployed and maintained
+# outside version control. Treat this list as an inventory, not as source.
+
 project_id = "tiornvtwymjhsrrpbwvr"
 
 [functions]

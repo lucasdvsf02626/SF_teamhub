@@ -43,16 +43,16 @@ import {
   Undo2
 } from "lucide-react";
 import { SicknessPatternWarning } from "@/components/SicknessPatternWarning";
-import { getLeaveYearDates } from "@/lib/leave-year-helpers";
+import { getLeaveYearDates } from '@sf/core';
 import {
   calculateSicknessMetrics,
   calculateProjectedMetrics,
   detectPatterns,
   type SickRequest,
-} from "@/lib/sickness-pattern-helpers";
-import { getUKBankHolidays, isBankHoliday, type BankHoliday } from "@/lib/uk-bank-holidays";
+} from '@sf/core';
+import { getUKBankHolidays, isBankHoliday, type BankHoliday } from '@sf/core';
 
-import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart } from "@/lib/leaveDays";
+import { requestDays, formatRequestDays, halfDayLabel, type LeaveDayPart } from '@sf/core';
 
 // leave_requests.request_type: holiday | sickness | lieu | closure | other
 type RequestType = "holiday" | "sickness" | "lieu" | "closure" | "other";

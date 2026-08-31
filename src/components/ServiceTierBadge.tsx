@@ -1,5 +1,5 @@
 import { Award } from "lucide-react";
-import type { ServiceTier } from "@/lib/service-tier-helpers";
+import type { ServiceTier } from '@sf/core';
 
 interface ServiceTierBadgeProps {
   tier: ServiceTier | null;

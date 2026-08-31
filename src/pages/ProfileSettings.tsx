@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { getServiceInfo, DEFAULT_SERVICE_TIERS } from "@/lib/service-tier-helpers";
+import { getServiceInfo, DEFAULT_SERVICE_TIERS } from '@sf/core';
 import { 
   User, 
   Loader2, 
